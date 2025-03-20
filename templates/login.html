@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Grok Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
+    <style>
+        .login-container {
+            width: 400px;
+            background: #0d0d0d;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.7);
+        }
+        .login-container h2 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #333;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .error-message {
+            color: #ff00ff;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Đăng nhập</h2>
+        <form id="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Tên đăng nhập" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Mật khẩu" required>
+            </div>
+            <button type="submit">Đăng nhập</button>
+        </form>
+        <div id="error-message" class="error-message"></div>
+    </div>
+
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/chat';
+                } else {
+                    document.getElementById('error-message').textContent = data.message;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('error-message').textContent = 'Đã xảy ra lỗi';
+            });
+        }
+    </script>
+</body>
+</html> 

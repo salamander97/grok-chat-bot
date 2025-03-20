@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script>
+        // Thêm hàm copy code vào window
+        window.copyCode = function (codeId) {
+            const codeElement = document.getElementById(codeId);
+            const textToCopy = codeElement.textContent;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Hiển thị thông báo đã sao chép
+                const copyBtn = codeElement.closest('.code-block-wrapper').querySelector('.copy-btn');
+                const originalIcon = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<span class="material-icons">check</span>';
+                copyBtn.classList.add('copied');
+
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalIcon;
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar với treelist -->
+        <div class="chat-sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" onclick="createNewChat()">
+                    <span class="material-icons">add</span>
+                    New Chat
+                </button>
+            </div>
+            <div class="chat-list" id="chatList">
+                <!-- Chat items sẽ được thêm vào đây động -->
+            </div>
+        </div>
+
+        <!-- Main chat container -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <h1>TRUNG HIẾU</h1>
+                <div class="header-actions">
+                    <button onclick="clearHistory()" class="clear-btn">
+                        <span class="material-icons" style="font-size: 16px;">delete</span>
+                        XÓA HẾT
+                    </button>
+                    <div class="signature">{{ username }}</div>
+                </div>
+            </div>
+            <div class="chat-box" id="chatBox">
+                <div class="message-group bot-message">
+                    <div class="message-header">
+                        <div class="avatar">AI</div>
+                        <div class="message-role">SYSTEM</div>
+                    </div>
+                    <div class="message">
+                        <div class="message-content">
+                            Chào tml! Hỏi gì hay upload file cho tao phân tích nào!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-area">
+                <div class="input-container">
+                    <textarea id="userInput" placeholder="Nhắn gì đó đi..." rows="1"
+                        onInput="autoResize(this)"></textarea>
+
+                    <!-- Dropdown chọn model đặt trước nút upload -->
+                    <div class="model-selector">
+                        <select id="modelSelector" onchange="changeModel(this.value)">
+                            <option value="grok">GROK-X</option>
+                            <option value="gemini">GEMINI</option>
+                        </select>
+                    </div>
+
+                    <label class="upload-label" for="file-upload">
+                        <span class="material-icons">add</span>
+                    </label>
+                    <input id="file-upload" type="file" accept="image/*,application/pdf" onchange="previewFile(this)">
+                    <button onclick="sendMessage()" id="sendButton" disabled>GỬI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+
+</html>
